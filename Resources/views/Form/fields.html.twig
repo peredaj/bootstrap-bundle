@@ -1,0 +1,432 @@
+{# PeredajBootstrapBundle:Form:fields.html.twig #}
+
+{% block form_start %}
+{% spaceless %}
+    {% set method = method | lower %}
+    {% if method in ["get", "post"] %}
+        {% set form_method = method %}
+    {% else %}
+        {% set form_method = "post" %}
+    {% endif %}
+    {% if form_style != 'simple' %}
+        {% set attr = attr | merge({'class': (attr.class | default('') ~ ' form-' ~ form_style) | trim}) %}
+    {% endif %}
+    <form method="{{ form_method }}" action="{{ action }}" {% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{{ block('form_enctype') }}>
+    {% if form_method != method %}
+        <input type="hidden" name="_method" value="{{ method }}" />
+    {% endif %}
+{% endspaceless %}
+{% endblock form_start %}
+
+        
+
+{% block form_row %}
+{% spaceless %}
+<div class="form-group{% if errors | length > 0 %} has-error{% endif %}">
+    {{ form_label(form) }}
+    {{ form_widget(form) }}
+</div>        
+{% endspaceless %}
+{% endblock form_row %}        
+        
+        
+        
+{% block button_row %}
+{% spaceless %}
+{{ block('button_row_' ~ form_style) }}
+{% endspaceless %}
+{% endblock button_row %}
+        
+        
+        
+{% block button_row_horizontal %}
+{% spaceless %}
+<div class="col-sm-{{ cols.right }} col-sm-offset-{{ cols.left }}">
+    {{ form_widget(form) }}
+</div>
+{% endspaceless %}
+{% endblock button_row_horizontal %}
+
+
+
+{% block button_row_simple %}
+{% spaceless %}
+{{ form_widget(form) }}
+{% endspaceless %}
+{% endblock button_row_simple %}
+
+
+
+{% block button_row_inline %}
+{% spaceless %}
+{{ form_widget(form) }}
+{% endspaceless %}
+{% endblock button_row_inline %}
+
+
+
+{% block form_errors %}
+{% spaceless %}
+{% if errors | length > 0 and form_style != 'inline' %}
+    <ul class="text-danger">
+    {% for error in errors %}
+        <li>{{ error.message | trans({}, translation_domain) }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+{% endspaceless %}
+{% endblock form_errors %}
+        
+        
+        
+{% block form_label %}
+{% spaceless %}
+    {% if label is not sameas(false) %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label')|trim}) %}
+        {% if not compound %}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {% endif %}
+        {% if required %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {% endif %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        {% if form_style == 'inline' %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' sr-only')|trim}) %}
+        {% elseif form_style == 'horizontal' %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label' ~ ' col-sm-' ~ cols.left)|trim}) %}
+        {% endif %}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}{% if required %}&nbsp;*{% endif %}</label>
+    {% endif %}
+{% endspaceless %}
+{% endblock form_label %}
+
+        
+        
+{% block radio_label %}{% endblock radio_label %}
+
+        
+        
+{% block checkbox_label %}{% endblock checkbox_label %}
+
+
+
+{% block form_widget_simple %}
+{% spaceless %}
+    {% set type = type | default('text') %}
+    {% set attr = attr | merge({'class': (attr.class | default('') ~ ' form-control') | trim}) %}
+    {{ block('form_widget_simple_' ~ form_style) }}
+{% endspaceless %}
+{% endblock form_widget_simple %} 
+
+
+
+{% block form_widget_simple_horizontal %}
+{% spaceless %}
+<div class="col-sm-{{ cols.right  }}{% if label is sameas(false) %} col-sm-offset-{{ cols.left }}{% endif %}">
+    {{ block('form_widget_simple_simple') }}
+</div>
+{% endspaceless %}
+{% endblock form_widget_simple_horizontal %}
+
+
+
+{% block form_widget_simple_simple %}
+{% spaceless %}
+{{ block('form_widget_simple_inner') }}
+{% if errors | length > 0 %}{{ block('form_errors') }}{% else %}{{ block('help') }}{% endif %}
+{% endspaceless %}
+{% endblock form_widget_simple_simple %}
+
+
+
+{% block form_widget_simple_inline %}
+{% spaceless %}
+{% if errors | length > 0 %}
+    {% for error in errors %}
+        {% set attr = attr | merge({'title': (attr.title | default('') ~ ' ' ~ error.message) | trim}) %}
+    {% endfor %}
+{% endif %}
+{{ block('form_widget_simple_inner') }}
+{% endspaceless %}
+{% endblock form_widget_simple_inline %}
+
+
+
+{% block form_widget_simple_inner %}
+{% spaceless %}
+<input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>        
+{% endspaceless %}
+{% endblock form_widget_simple_inner %}        
+
+
+
+{% block help %}
+{% spaceless %}
+<p class="help-block">{{ help | trans({}, translation_domain) }}</p>
+{% endspaceless %}
+{% endblock help %}
+
+
+
+{% block choice_widget_expanded %}
+{% spaceless %}
+{{ block('choice_widget_expanded_' ~ form_style) }}
+{% endspaceless %}
+{% endblock choice_widget_expanded %}
+        
+
+
+{% block choice_widget_expanded_horizontal %}
+{% spaceless %}
+{% set attr = attr | merge({'class': (attr.class| default('') ~ ' col-sm-' ~ cols.right) | trim}) %}
+{% if label is sameas(false) %}
+    {% set attr = attr | merge({'class': (attr.class| default('') ~ ' col-sm-offset-' ~ cols.left) | trim}) %}
+{% endif %}
+{{ block('choice_widget_expanded_simple') }}
+{% endspaceless %}
+{% endblock choice_widget_expanded_horizontal %}
+
+
+
+{% block choice_widget_expanded_simple %}
+{% spaceless %}
+{{ block('choice_widget_expanded_inner') }}
+{% if errors | length > 0 %}{{ block('form_errors') }}{% else %}{{ block('help') }}{% endif %}
+{% endspaceless %}
+{% endblock choice_widget_expanded_simple %}
+
+
+
+{% block choice_widget_expanded_inline %}
+{% spaceless %}
+{% if errors | length > 0 %}
+    {% for error in errors %}
+        {% set attr = attr | merge({'title': (attr.title | default('') ~ ' ' ~ error.message) | trim}) %}
+    {% endfor %}
+{% endif %}
+{{ block('choice_widget_expanded_inner') }}
+{% endspaceless %}
+{% endblock choice_widget_expanded_inline %}
+
+
+
+{% block choice_widget_expanded_inner %}
+{% spaceless %}
+    <div {{ block('widget_container_attributes') }}>
+    {% for child in form %}
+        {{ form_widget(child) }}
+    {% endfor %}
+    </div>
+{% endspaceless %}
+{% endblock choice_widget_expanded_inner %}
+
+
+
+{% block choice_widget_collapsed %}
+{% spaceless %}
+    {% set attr = attr | merge({'class': (attr.class | default('') ~ ' form-control') | trim}) %}
+    {% if required and empty_value is none and not empty_value_in_choices %}
+        {% set required = false %}
+    {% endif %}
+    {{ block('choice_widget_collapsed_' ~ form_style) }}
+{% endspaceless %}
+{% endblock choice_widget_collapsed %}
+
+
+
+{% block choice_widget_collapsed_horizontal %}
+{% spaceless %}
+<div class="col-sm-{{ cols.right  }}{% if label is sameas(false) %} col-sm-offset-{{ cols.left }}{% endif %}">
+    {{ block('choice_widget_collapsed_simple') }}
+</div>
+{% endspaceless %}
+{% endblock choice_widget_collapsed_horizontal %}
+
+
+
+{% block choice_widget_collapsed_simple %}
+{% spaceless %}
+{{ block('choice_widget_collapsed_inner') }}
+{% if errors | length > 0 %}{{ block('form_errors') }}{% else %}{{ block('help') }}{% endif %}
+{% endspaceless %}
+{% endblock choice_widget_collapsed_simple %}
+
+
+
+{% block choice_widget_collapsed_inline %}
+{% spaceless %}
+{% if errors | length > 0 %}
+    {% for error in errors %}
+        {% set attr = attr | merge({'title': (attr.title | default('') ~ ' ' ~ error.message) | trim}) %}
+    {% endfor %}
+{% endif %}
+{{ block('choice_widget_collapsed_inner') }}
+{% endspaceless %}
+{% endblock choice_widget_collapsed_inline %}
+
+
+
+{% block choice_widget_collapsed_inner %}
+{% spaceless %}
+<select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+    {% if empty_value is not none %}
+        <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ empty_value|trans({}, translation_domain) }}</option>
+    {% endif %}
+    {% if preferred_choices|length > 0 %}
+        {% set options = preferred_choices %}
+        {{ block('choice_widget_options') }}
+        {% if choices|length > 0 and separator is not none %}
+            <option disabled="disabled">{{ separator }}</option>
+        {% endif %}
+    {% endif %}
+    {% set options = choices %}
+    {{ block('choice_widget_options') }}
+</select>
+{% endspaceless %}
+{% endblock choice_widget_collapsed_inner %}
+
+
+
+{% block checkbox_widget %}
+{% spaceless %}
+{% set type = 'checkbox' %}
+{{ block('boolean_widget') }}
+{% endspaceless %}
+{% endblock checkbox_widget %}
+
+
+
+{% block radio_widget %}
+{% spaceless %}
+{% set type = 'radio' %}
+{{ block('boolean_widget') }}
+{% endspaceless %}
+{% endblock radio_widget %}
+
+
+
+{% block boolean_widget %}
+{% spaceless %}
+{% if label is empty %}
+    {% set label = name|humanize %}
+{% endif %}
+{% set label_attr = label_attr|merge({'for': id}) %}
+{% if required %}
+    {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+{% endif %}
+{% if form.parent.vars.expanded is defined  or form_style == 'inline' %}
+    {% set label_attr = label_attr | merge({'class': (attr.class| default('') ~ ' ' ~ type ~ '-inline') | trim}) %}
+{% endif %}
+{% if form.parent.vars.expanded is defined %}
+    {% set form_style = 'inner' %}
+{% endif %}
+{{ block('boolean_widget_' ~ form_style) }}
+{% endspaceless %}
+{% endblock boolean_widget %}
+     
+
+
+{% block boolean_widget_horizontal %}
+{% spaceless %}
+<div class="col-sm-{{ cols.right  }} col-sm-offset-{{ cols.left }}">
+    {{ block('boolean_widget_simple') }}
+</div>
+{% endspaceless %}
+{% endblock boolean_widget_horizontal %}
+
+
+
+{% block boolean_widget_simple %}
+{% spaceless %}
+<div class="{{ type }}">
+    {{ block('boolean_widget_inner') }}
+</div>
+{% if errors | length > 0 %}{{ block('form_errors') }}{% else %}{{ block('help') }}{% endif %}
+{% endspaceless %}
+{% endblock boolean_widget_simple %}
+
+
+
+{% block boolean_widget_inline %}
+{% spaceless %}
+{% if errors | length > 0 %}
+    {% for error in errors %}
+        {% set attr = attr | merge({'title': (attr.title | default('') ~ ' ' ~ error.message) | trim}) %}
+    {% endfor %}
+{% endif %}
+{{ block('boolean_widget_inner') }}
+{% endspaceless %}
+{% endblock boolean_widget_inline %}
+
+
+
+{% block boolean_widget_inner %}
+{% spaceless %}
+<label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+    <input type="{{ type }}" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />{{ label | trans({}, translation_domain) }}
+</label>
+{% endspaceless %}
+{% endblock boolean_widget_inner %}
+
+
+     
+{% block button_widget %}
+{% spaceless %}
+{% if label is empty %}
+    {% set label = name | humanize %}
+{% endif %}
+{% set attr = attr|merge({'class': (attr.class|default('') ~ ' btn')|trim}) %}
+ <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
+{% endspaceless %}
+{% endblock button_widget %}
+
+
+
+{% block textarea_widget %}
+{% spaceless %}
+{% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
+{{ block('textarea_widget_' ~ form_style) }}
+{% endspaceless %}
+{% endblock textarea_widget %}
+
+
+
+{% block textarea_widget_horizontal %}
+{% spaceless %}
+<div class="col-sm-{{ cols.right  }}{% if label is sameas(false) %} col-sm-offset-{{ cols.left }}{% endif %}">
+    {{ block('textarea_widget_simple') }} 
+</div>
+{% endspaceless %}
+{% endblock textarea_widget_horizontal %}
+
+
+
+{% block textarea_widget_simple %}
+{% spaceless %}
+{{ block('textarea_widget_inner') }} 
+{% if errors | length > 0 %}{{ block('form_errors') }}{% else %}{{ block('help') }}{% endif %}
+{% endspaceless %}
+{% endblock textarea_widget_simple %}
+
+
+
+{% block textarea_widget_inline %}
+{% spaceless %}
+{% if errors | length > 0 %}
+    {% for error in errors %}
+        {% set attr = attr | merge({'title': (attr.title | default('') ~ ' ' ~ error.message) | trim}) %}
+    {% endfor %}
+{% endif %}
+{{ block('textarea_widget_inner') }} 
+{% endspaceless %}
+{% endblock textarea_widget_inline %}
+
+
+     
+{% block textarea_widget_inner %}
+{% spaceless %}
+<textarea {{ block('widget_attributes') }}>{{ value }}</textarea>     
+{% endspaceless %}
+{% endblock textarea_widget_inner %}
